@@ -1,4 +1,4 @@
-#include "uart.h"
+#include <uart.h>
 
 void mmio_write(uint32_t reg, uint32_t data)
 {

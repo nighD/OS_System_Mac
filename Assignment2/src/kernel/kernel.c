@@ -1,32 +1,41 @@
 #include "kernel.h"
+#define MODE_READ 0
+#define MODE_WRITE 1
+#define MAX_LEN 32
 
-void kernel_main(){
+uint16_t clk_div = 2500 ;
+uint8_t slave_address = 0x00;
+uint32_t len = 0;
+uint8_t *data;
+unsigned char wbuf[MAX_LEN];
+int i;
+
+void kernel_main()
+{
+    register unsigned int r;
+    wbuf[0] = 0x00;
+    wbuf[1] = 0x55;
+    unsigned char buff[7];
+    char khung[2] = {0x00,0x00};
+    slave_address = 0x68;
+    len = 7;
     uart_init();
-    bsc_master_init();
-    puts("EEET2490: Embedded Systems - Operating Systems & Interfacing \n");
-    puts("------------------------------------------------------------ \n");
-    puts("Assessment Group: 12 \n");
-    puts("s3678436: Khoa Dang Le \n");
-    puts("s3595082: Bao Gia Le \n");
-    puts("s3695424: Anh Duy Ngo \n");
-    // puts("------------------------------------------------------------ \n");
-    // puts("Implementation of all functions in deliverable 4 \n");
-    // puts("------------------------------------------------------------ \n");
-    // puts("Function itoa(): ");
-    // puts(itoa(-12318474));
-    // putc('\n');
-    // puts("Function itoa(): ");
-    // puts(itoa(0));
-    // putc('\n');
-    // puts("Function dextohex(): ");
-    // puts(dectohex(999));
-    // putc('\n');
-    // puts("Function atoi(): ");
-    // puts(itoa(atoi("-199972")));
-    // putc('\n');
+    puts("Thao day\n");
+    bcm2835_init();
 
-    char buffer[BUFFERLENGTH];
-    while(1){
-        gets(buffer, BUFFERLENGTH);
+    bcm2835_i2c_begin();
+    bcm2835_i2c_setSlaveAddress(slave_address);
+    bcm2835_i2c_setClockDivider(clk_div);
+    *data = bcm2835_i2c_write(&khung, 2);
+    for (i=0; i<7; i++) buff[i] = 'n';
+    bcm2835_i2c_read(buff, len);
+    puts("\n");
+    // puts(data);
+    for (i=0; i<7; i++) {
+            if(buff[i] != 'n') 
+            {
+                puts("Read Buf[] =");
+                puts(itoa(bcd_to_decimal(buff[i])));
+            }
     }
 }

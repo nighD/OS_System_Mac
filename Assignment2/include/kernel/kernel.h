@@ -4,7 +4,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "uart.h"
-#include "bsc.h"
+#include "i2c.h"
 
 #define BUFFERLENGTH 80
 
