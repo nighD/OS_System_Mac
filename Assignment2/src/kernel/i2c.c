@@ -603,7 +603,6 @@ uint8_t bcm2835_i2c_write(const char * buf, uint32_t len)
 	}
 
 	bcm2835_peri_set_bits(control, BCM2835_BSC_S_DONE , BCM2835_BSC_S_DONE);
-	puts(itoa(reason));
 	return reason;
 	
 }
@@ -697,4 +696,36 @@ void bcm2835_i2c_setClockDivider(uint16_t divider)
 	// 1000000 = micros seconds in a second
 	// 9 = Clocks per byte : 8 bits + ACK
 	i2c_byte_wait_us = ((float)divider / BCM2835_CORE_CLK_HZ) * 1000000 * 9;
+}
+
+void bcm2835_delay(unsigned int millis)
+{
+	bcm2835_delayMicroseconds(1000 * millis);
+}
+
+// microseconds
+void bcm2835_delayMicroseconds(uint64_t micros)
+{
+	uint64_t start = bcm2835_st_read();
+	bcm2835_st_delay(start, micros);
+}
+
+uint64_t bcm2835_st_read(void)
+{
+	volatile uint32_t* paddr;
+	uint64_t st;
+	paddr = bcm2835_st + BCM2835_ST_CHI/4;
+	st = bcm2835_peri_read(paddr);
+	st <<= 32;
+	paddr = bcm2835_st + BCM2835_ST_CLO/4;
+	st += bcm2835_peri_read(paddr);
+	return st;
+}
+
+void bcm2835_st_delay(uint64_t offset_micros, uint64_t micros)
+{
+	uint64_t compare = offset_micros + micros;
+
+	while(bcm2835_st_read() < compare)
+		;
 }

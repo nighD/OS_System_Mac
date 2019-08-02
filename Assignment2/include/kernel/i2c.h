@@ -12,6 +12,9 @@
 #define BSC0_DEL 	((volatile unsigned int*)(BSC0_BASE + 0x18)) //Data Delay
 #define BSC0_CLKT 	((volatile unsigned int*)(BSC0_BASE + 0x1c)) //Clock Stretch Timeout
 
+#define BCM2835_ST_CS 							0x0000 ///< System Timer Control/Status
+#define BCM2835_ST_CLO 							0x0004 ///< System Timer Counter Lower 32 bits
+#define BCM2835_ST_CHI 							0x0008 ///< System Timer Counter Upper 32 bits
 
 #define BSC_C_I2CEN     (1 << 15) // I2C Enable
 #define BSC_C_INTR      (1 << 10) // Interrupt on RX
@@ -59,3 +62,9 @@ void bcm2835_peri_write_nb(volatile uint32_t* paddr, uint32_t value);
 void bcm2835_peri_write(volatile uint32_t* paddr, uint32_t value);
 
 void bcm2835_i2c_setClockDivider(uint16_t divider);
+void bcm2835_delay(unsigned int millis);
+// microseconds
+void bcm2835_delayMicroseconds(uint64_t micros);
+
+uint64_t bcm2835_st_read(void);
+void bcm2835_st_delay(uint64_t offset_micros, uint64_t micros);
