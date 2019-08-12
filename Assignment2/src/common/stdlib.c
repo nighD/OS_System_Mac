@@ -97,12 +97,15 @@ char* dectohex(int i){
         num /= 16;
         size++;
     }
+    if(i == 0){size += 1;}
+    if (size == 1) {size++;}
 
     char hexvalue[size];
     hex = hexvalue;
+    *hex = '0';
     *(hex+size) = '\0';     //Assign null character to the end of the array
 
-    while ( i != 0){        
+    do{
         if ((i % 16) < 10){                 //Check for the convertible values are in range from 0 to 9
             *(hex+size-1) = (i % 16) + '0'; //Get the ASCII value of an number by adding with the ASCII value of '0' which is 48
         } else {                            //The convertible values are greater than 10 which is from 'A' to 'F' in hexadecimal form
@@ -110,7 +113,9 @@ char* dectohex(int i){
         }
         size--;
         i /= 16;
-    }
-    delay(1);   //Delay for a short amount of time after executing the function.
+        delay(1);
+    } while ( i != 0);
+
     return hex;
 }
+

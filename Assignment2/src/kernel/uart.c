@@ -1,4 +1,4 @@
-#include <uart.h>
+#include "uart.h"
 
 void mmio_write(uint32_t reg, uint32_t data)
 {
@@ -46,15 +46,8 @@ void uart_init(void)
     mmio_write(UART0_CR, control.as_int);
     //Disable UART
     // Enable Pin 14 and 15
-    mmio_write(GPPUD, 0x00000000);
-    // This provides the required set-up time for the control signal
-    delay(150);
-    // Enable clock for pull-ups/ pull-downs on Pin 14 and 15
-    mmio_write(GPPUDCLK0, (1 << 14) | (1 << 15));
-    // This provides the required set-up time for the control signal
-    delay(150);
-    // Flush the GPIO setup
-    mmio_write(GPPUDCLK0, 0x00000000);
+    set_pud(GPPUDCLK0, 14, 1);
+    set_pud(GPPUDCLK0, 15, 1);
     // Clear all UART0 interrupts
     mmio_write(UART0_ICR, 0x7FF);
     // Set 8 bit word length
